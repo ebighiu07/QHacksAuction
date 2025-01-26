@@ -1,0 +1,35 @@
+// File: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  clerk_user_id String   @unique // This is the Clerk's user ID
+  email         String   @unique
+  tags          Json?
+  current_bids  Json?
+  posts         Post[]
+
+  // You can add more fields if necessary, such as profile information
+}
+
+model Post {
+  id              Int       @id @default(autoincrement())
+  user_id         String
+  title           String
+  tags            Json?
+  imageUrl        String
+  initial_price   Decimal?
+  current_price   Decimal?
+  created_at      DateTime  @default(now())
+  ends_at         DateTime?
+
+  user            User      @relation(fields: [user_id], references: [clerk_user_id], onDelete: Cascade)
+}
